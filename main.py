@@ -16,12 +16,19 @@ class ImageGridApp:
         screen_width = main.winfo_screenwidth()
         screen_height = main.winfo_screenheight()
 
-        # Calculate the x and y coordinates to center the window
-        x_position = (3 * screen_width // 4 - main.winfo_reqwidth()) // 2
-        y_position = (3 * screen_height // 4 - main.winfo_reqheight()) // 2
+        # Calculate the screen width and height
+        screen_width = main.winfo_screenwidth()
+        screen_height = main.winfo_screenheight()
 
-        # Set the window position
-        main.geometry("+{}+{}".format(x_position, y_position))
+        # Calculate the x and y coordinates to center the window
+        x_position = (screen_width // 2 - main.winfo_reqwidth()) // 2
+        y_position = (screen_height // 2 - main.winfo_reqheight()) // 2
+
+        # Set the window position and size
+        window_width = 650
+        window_height = 700
+        main.geometry("{}x{}+{}+{}".format(window_width, window_height,
+                                           x_position, y_position))
 
         self.image_refs = [
         ]  # To store references to ImageTk.PhotoImage objects
@@ -61,12 +68,19 @@ class ImageGridApp:
         return image.resize((new_width, new_height),
                             3)  # 3 corresponds to Image.ANTIALIAS
 
+    def clear_previous_images(self):
+        # Method to clear the previous images and labels
+        for widget in self.image_frame.winfo_children():
+            widget.destroy()
+
     def show_image(self, file_path):
         # Method to display the selected image in a 2x2 grid
+        self.clear_previous_images()  # Clear previous images and labels
+
         image = Image.open(file_path)
 
         # Define the desired width while maintaining aspect ratio
-        desired_width = 200
+        desired_width = 250
 
         # Resize the image with the aspect ratio preserved
         image = self.maintain_aspect_ratio(image, desired_width)
