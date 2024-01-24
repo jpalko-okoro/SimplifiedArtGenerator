@@ -1,7 +1,7 @@
 import os
 import tkinter as tk
 from tkinter import filedialog
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageFilter
 
 
 # Class definition for the ImageGridApp
@@ -73,25 +73,68 @@ class ImageGridApp:
         for widget in self.image_frame.winfo_children():
             widget.destroy()
 
+    # Pass the grayscale image in for this first pass of filtering
+    def image_filtering_pass_1(self, image):
+        # Make sure image is grayscale without alpha values
+        if image.mode in ('L', 'LA', 'P', 'I'):
+            filtered_image = image
+        else:
+            filtered_image = image.convert('LA')
+
+        width, height = filtered_image.size
+
+        grayscale_values = []
+
+        for y in range(height):
+            for x in range(width):
+                pixel_value = filtered_image.getpixel((x, y))
+
+                # If the filtered_image is in LA format, the pixel value is a tuple otherwise it is a single integer
+                if isinstance(pixel_value, int):
+                    grayscale_values.append(pixel_value)
+                else:
+                    # If the filtered_image is in 'LA' mode, extract the luminance value (luminance, alpha)
+                    grayscale_values.append(pixel_value[0])
+
+        print("Width of image:", filtered_image.width)
+        print("Height of image:", filtered_image.height)
+        pixel_num = width * height
+        print("All pixel grayscale values:", grayscale_values[:pixel_num])
+
+        # Adaptive thresholding over the pixels
+        difference_threshold = 10
+
+        # Averaging out the image to make more consistent values (0 has no affect)
+        local_average = filtered_image.filter(ImageFilter.BoxBlur(0))
+
+        # TODO: Fix this filtering to actually use the querieid grayscale values and a windowed based average for them or something
+        filtered_image = filtered_image.point(
+            lambda x, local_avg=local_average: 0
+            if x > local_avg.getpixel((x % width, y % height))[0] else 255)
+
+        # Read out the value of each pixel from 0 to 255 for grayscale
+        return filtered_image
+
     def show_image(self, file_path):
         # Method to display the selected image in a 2x2 grid
         self.clear_previous_images()  # Clear previous images and labels
 
         image = Image.open(file_path)
 
-        # Define the desired width while maintaining aspect ratio
+        # Define the desired width while maintaining aspect ratio (This should probably be done after the filtering is finished)
         desired_width = 250
 
         # Resize the image with the aspect ratio preserved
         image = self.maintain_aspect_ratio(image, desired_width)
         grayscale_image = image.convert('LA')
-
-        grayscaleSet = False
+        filtered_image_pass_1 = self.image_filtering_pass_1(grayscale_image)
 
         for i in range(2):
             for j in range(2):
                 if i == 0 and j == 1:
                     used_image = grayscale_image
+                elif i == 1 and j == 0:
+                    used_image = filtered_image_pass_1
                 else:
                     used_image = image
 
