@@ -84,22 +84,31 @@ class ImageGridApp:
 
         # Resize the image with the aspect ratio preserved
         image = self.maintain_aspect_ratio(image, desired_width)
+        grayscale_image = image.convert('LA')
+
+        grayscaleSet = False
 
         for i in range(2):
             for j in range(2):
+                if i == 0 and j == 1:
+                    used_image = grayscale_image
+                else:
+                    used_image = image
+
                 # Create a label to display the resolution of the image
                 label = tk.Label(
                     self.image_frame,
-                    text=f"Resolution: {image.size[0]}x{image.size[1]}")
+                    text=
+                    f"Resolution: {used_image.size[0]}x{used_image.size[1]}")
                 label.grid(row=i, column=j)  # Grid layout for the labels
 
-                photo = ImageTk.PhotoImage(image)
+                photo = ImageTk.PhotoImage(used_image)
                 self.image_refs.append(
                     photo)  # Store the reference to prevent garbage collection
 
                 # Create a label to display the image
                 image_label = tk.Label(self.image_frame, image=photo)
-                image_label.image = photo
+                image_label.used_image = photo
                 image_label.grid(row=i, column=j)  # Grid layout for the images
 
 
