@@ -47,7 +47,6 @@ class ImageGridApp:
             row=0, column=1)  # Create a frame to hold the image grid
 
     def open_file_dialog(self):
-        # Method to open a file dialog for selecting a PNG file
         initial_dir = os.path.dirname(os.path.realpath(__file__))
         file_path = filedialog.askopenfilename(initialdir=initial_dir,
                                                filetypes=[("PNG files",
@@ -57,20 +56,19 @@ class ImageGridApp:
                 file_path)  # If a file is selected, call the show_image method
 
     def maintain_aspect_ratio(self, image, new_width):
-        # Method to resize the image while maintaining aspect ratio
         width_percent = (new_width / float(image.size[0]))
         new_height = int((float(image.size[1]) * float(width_percent)))
         return image.resize((new_width, new_height),
                             3)  # 3 corresponds to Image.ANTIALIAS
 
+    # Method to clear the previous images and labels
     def clear_previous_images(self):
-        # Method to clear the previous images and labels
         for widget in self.image_frame.winfo_children():
             widget.destroy()
 
+    # Method to display the selected image in a 2x2 grid
     def show_image(self, file_path):
-        # Method to display the selected image in a 2x2 grid
-        self.clear_previous_images()  # Clear previous images and labels
+        self.clear_previous_images()
 
         image = Image.open(file_path)
 
@@ -96,13 +94,12 @@ class ImageGridApp:
                     self.image_frame,
                     text=
                     f"Resolution: {used_image.size[0]}x{used_image.size[1]}")
-                label.grid(row=i, column=j)  # Grid layout for the labels
+                label.grid(row=i, column=j)
 
                 photo = ImageTk.PhotoImage(used_image)
                 self.image_refs.append(
                     photo)  # Store the reference to prevent garbage collection
 
-                # Create a label to display the image
                 image_label = tk.Label(self.image_frame, image=photo)
                 image_label.used_image = photo
-                image_label.grid(row=i, column=j)  # Grid layout for the images
+                image_label.grid(row=i, column=j)
