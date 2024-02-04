@@ -1,5 +1,6 @@
 from PIL import ImageFilter
 
+SHOW_TRACE_LOGS = true
 
 # Pass the grayscale image in for this first pass of filtering
 def image_filtering_pass_1(image):
@@ -24,10 +25,12 @@ def image_filtering_pass_1(image):
                 # If the filtered_image is in 'LA' mode, extract the luminance value (luminance, alpha)
                 grayscale_values.append(pixel_value[0])
 
-    print("Width of image:", filtered_image.width)
-    print("Height of image:", filtered_image.height)
-    pixel_num = width * height
-    print("All pixel grayscale values:", grayscale_values[:pixel_num])
+        
+    if (SHOW_TRACE_LOGS):
+        print("Width of image:", filtered_image.width)
+        print("Height of image:", filtered_image.   height)
+        pixel_num = width * height
+        print("All pixel grayscale values:", grayscale_values[:pixel_num])
 
     # Adaptive thresholding over the pixels
     difference_threshold = 10
