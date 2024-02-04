@@ -1,6 +1,6 @@
 from PIL import ImageFilter
 
-SHOW_TRACE_LOGS = true
+SHOW_TRACE_LOGS = False
 
 # Pass the grayscale image in for this first pass of filtering
 def image_filtering_pass_1(image):
